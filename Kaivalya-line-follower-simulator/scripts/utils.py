@@ -23,9 +23,9 @@ def PID(kp, ki, kd, I,
     if dt == 0:
         dt+=1e-5
     
-    P = kp*error
-    D = kd*(error - last_error)/dt
-    I += ki*error*dt
+    P = kp*"""---------"""
+    D = kd*"""---------"""
+    I += ki*"""---------"""
  
     return P + D + I, I
 
