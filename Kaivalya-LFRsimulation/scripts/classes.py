@@ -18,15 +18,18 @@ class Motor:
             max_motor_speed (float): maximum motor speed, in rpm.
             wheel_radius (float): wheel radius, in meters.
         """
+    
         self.max_motor_speed = max_motor_speed
         self.wheel_radius = wheel_radius
     
     def set_speed(self, speed):
         """Sets the motor speed.
+        
         Args:
             speed (float): motor speed, in rpm.
-            ------------------------------------
         """
+        
+        self.speed = speed
 
 
 class Sensor:
@@ -52,8 +55,13 @@ class Sensor:
         
         Args:
             robot_position (tuple): robot current position (x, y, heading), in meters and radians.
-            -------------------------------------------------------------------------------------
         """
+        # Rotates the sensor's relative position vector according to the robot's angle
+        sensor_position_rotated = utils.rotate_vector(sensor_relative_position, robot_position[2])
+        
+        # Adds the relative position vector to the robot's position to obtain the sensor's real position
+        self.x = robot_position[0] + sensor_position_rotated[0] 
+        self.y = robot_position[1] - sensor_position_rotated[1] # y-axis is inverted
     
     def read_data(self, map_image):
         """Reads the sensor data. The sensor returns 0 if it reads a dark color and 1 if it reads a light color.
@@ -141,20 +149,24 @@ class Robot:
         self.right_motor.set_speed(self.right_motor.max_motor_speed)
         
     def move_backward(self):
-        """Moves the robot backward at maximum speed.
-        ---------------------------------------------"""
+        """Moves the robot backward at maximum speed."""
+        self.left_motor.set_speed(-self.left_motor.max_motor_speed)
+        self.right_motor.set_speed(-self.right_motor.max_motor_speed)
         
     def turn_left(self):
-        """Turns the robot left at maximum speed.
-        -----------------------------------------"""
+        """Turns the robot left at maximum speed."""
+        self.left_motor.set_speed(-self.left_motor.max_motor_speed)
+        self.right_motor.set_speed(self.right_motor.max_motor_speed)
         
     def turn_right(self):
-        """Turns the robot right at maximum speed.
-        ---------------------------------------"""
+        """Turns the robot right at maximum speed."""
+        self.left_motor.set_speed(self.left_motor.max_motor_speed)
+        self.right_motor.set_speed(-self.right_motor.max_motor_speed)
     
     def stop(self):
-        """Stops the robot.
-        ---------------"""
+        """Stops the robot."""
+        self.left_motor.set_speed(0)
+        self.right_motor.set_speed(0)
     
     def add_sensor(self, sensor_relative_position, robot_initial_position):
         """Adds a sensor to the robot.
